@@ -98,7 +98,7 @@ def main():
                 host_ports[host] = [port]
     for host,ports in host_ports.iteritems():
         ports = ",".join(str(x) for x in ports)
-        commands.append(['nmap', '-sS', '-sV', '-p', ports, '-oA', args.output_file, '--append-output', host])
+        commands.append(['nmap', '-Pn', '-sS', '-sV', '-p', ports, '-oA', args.output_file, '--append-output', host])
 
     print("\n[+] Starting nmap, please be patient...\n")
     exec_commands(commands)
