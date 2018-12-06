@@ -4,9 +4,6 @@
 
 This should finish much faster than nmap alone.
 
-Parts of this code related to multiprocessing was included from Benjamin Sergeant's recipe posted here:
-http://code.activestate.com/recipes/577376-simple-way-to-execute-multiple-process-in-parallel/"""
-
 __author__ = "Steve Campbell (@lpha3ch0)"
 __license__ = "MIT"
 __version__ = "1.0"
