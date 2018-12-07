@@ -33,7 +33,7 @@ def exec_commands(cmds):
     def fail():
         sys.exit(1)
 
-    max_task = cpu_count() * 3
+    max_task = 12 # Tweaked for the PTK's. Adjust as needed.
     processes = []
     while True:
         while cmds and len(processes) < max_task:
