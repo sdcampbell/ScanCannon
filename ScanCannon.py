@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-"""ScanCannon.py - Runs masscan, follows up with Nmap for more detailed service info."""
+"""ScanCannon.py - Runs masscan, follows up with Nmap for more detailed service info.
 
-This should finish much faster than nmap alone.
+This should finish much faster than nmap alone."""
 
 __author__ = "Steve Campbell (@lpha3ch0)"
 __license__ = "MIT"
