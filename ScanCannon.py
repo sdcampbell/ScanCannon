@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""ScanCannon.py - Runs masscan, follows up with Nmap for more detailed service info.
+"""ScanCannon.py - Runs masscan, follows up with Nmap for more detailed service info."""
 
 This should finish much faster than nmap alone.
 
