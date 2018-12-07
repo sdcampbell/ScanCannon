@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 
 """ScanCannon.py - Runs masscan, follows up with Nmap for more detailed service info.
-
 This should finish much faster than nmap alone.
-
-Parts of this code related to multiprocessing was included from Benjamin Sergeant's recipe posted here:
-http://code.activestate.com/recipes/577376-simple-way-to-execute-multiple-process-in-parallel/"""
+"""
 
 __author__ = "Steve Campbell (@lpha3ch0)"
 __license__ = "MIT"
@@ -36,7 +33,7 @@ def exec_commands(cmds):
     def fail():
         sys.exit(1)
 
-    max_task = cpu_count()
+    max_task = cpu_count() * 3
     processes = []
     while True:
         while cmds and len(processes) < max_task:
