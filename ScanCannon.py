@@ -55,6 +55,9 @@ def exec_commands(cmds):
 
 def do_masscan(scope_file, ports):
     masscan_path = os.popen("which masscan").read().rstrip()
+    if not masscan_path:
+        print("\n[!] Masscan was not found! Please install Masscan and rerun.\n")
+        sys.exit(1)
     masscan_args = " -p {0} --open -oG masscan.gnmap -iL {1} --rate=10000".format(ports, scope_file)
     print("\n[+] Running masscan, please be patient...")
     os.system(masscan_path + masscan_args)
