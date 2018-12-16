@@ -12,4 +12,4 @@ positional arguments:
 optional arguments:
   -h, --help       show this help message and exit
   --all-ports      Scan all 65536 TCP ports.
-  --limited-ports  Scan a limited number of top ports.
+  --limited-ports  Scan a limited number of common vulnerable ports.
