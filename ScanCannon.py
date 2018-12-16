@@ -137,7 +137,7 @@ def main():
     parser.add_argument("scope_file", help="Path to the file which contains hosts/networks in scope.")
     parser.add_argument("output_file", help="Base name/path to the output file. Leave off the extension, which will be added by nmap.")
     parser.add_argument("--all-ports", dest="all_ports", action="store_true", help="Scan all 65536 TCP ports.")
-    parser.add_argument("--limited-ports", dest="limited_ports", action="store_true", help="Scan a limited number of top ports.")
+    parser.add_argument("--limited-ports", dest="limited_ports", action="store_true", help="Scan a limited number of common vulnerable ports.")
     args = parser.parse_args()
 
     # Run Masscan
