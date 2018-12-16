@@ -114,7 +114,7 @@ def smb_vulns():
     nm = nmap.PortScanner()
     vuln_hosts = []
     for target in hosts:
-        nm.scan(hosts=target, ports='445', arguments='-sS --script=smb-vuln-ms06-025.nse,smb-vuln-ms07-029.nse,smb-vuln-ms08-067.nse,smb-vuln-ms17-010.nse')
+        nm.scan(hosts=target, ports='445', arguments='-sS --script=smb-vuln-ms17-010.nse,smb-vuln-ms06-025.nse,smb-vuln-ms07-029.nse,smb-vuln-ms08-067.nse')
         for host in nm._scan_result['scan'].keys():
             try:
                 for x in nm._scan_result['scan'][host]['hostscript']:
