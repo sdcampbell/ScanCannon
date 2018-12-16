@@ -176,7 +176,7 @@ def main():
     grep_gnmap_hosts("{}.gnmap".format(args.output_file), '445', 'tcp')
     print("\nChecking hosts for SMB signing...")
     smb_signing()
-    print("\nChecking hosts for SMB vulnerbilities...")
+    print("\nChecking hosts for SMB vulnerabilities...")
     smb_vulns()
 
 

@@ -1,6 +1,6 @@
 # ScanCannon
 
-Masscan alone is fast but doesn't provide service version info. Nmap alone is too slow when scanning all 65535 TCP ports. ScanCannon first runs Masscan, the follows up with parallel Nmap scans of only those hosts/ports that Masscan discovers open.
+Masscan alone is fast but doesn't provide service version info. Nmap alone is too slow when scanning all 65535 TCP ports. ScanCannon first runs Masscan, the follows up with parallel Nmap scans of only those hosts/ports that Masscan discovers open. Finally, ScanCannon tests those hosts with 445/tcp open for SMB signing and SMB vulnerabilities including MS08-067 and MS17-010.
 
 usage: ScanCannon.py scope_file output_file [--all-ports] [--limited-ports]
 
