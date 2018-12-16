@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """ScanCannon.py - Runs masscan, follows up with Nmap for more detailed service info.
 
@@ -13,11 +13,10 @@ __email__ = "sdcampbell68@live.com"
 import argparse, os, sys, time
 from subprocess import Popen, list2cmdline
 from multiprocessing import cpu_count
-
-start = time.time()
+import nmap
 
 nmap_results = []
-top_ports = "21,22,23,25,53,80,81,110,111,123,137-139,161,389,443,445,500,512,513,548,623-624,1099,1241,1433-1434,1521,2049,2483-2484,3306,3389,4333,4786,4848,5432,5800,5900,5901,6000,6001,7001,8000,8080,8181,8443,10000,16992-16993,27017,32764"
+top_ports = "21,22,23,25,53,80,81,110,111,123,137-139,161,389,443,445,500,512,513,548,623-624,1099,1241,1433-1434,1521,2049,2375,2376,2483-2484,3306,3389,4333,4786,4848,5432,5800,5900,5901,6000,6001,7001,8000,8080,8181,8443,10000,16992-16993,27017,32764"
 all_ports = "1-65535"
 
 def exec_commands(cmds):
@@ -38,7 +37,7 @@ def exec_commands(cmds):
     while True:
         while cmds and len(processes) < max_task:
             task = cmds.pop()
-            print list2cmdline(task)
+            print(list2cmdline(task))
             processes.append(Popen(task))
 
         for p in processes:
@@ -63,6 +62,74 @@ def do_masscan(scope_file, ports):
     os.system(masscan_path + masscan_args)
     # Wait for masscan to complete
     print("\n[+] Masscan complete!\n")
+
+def grep_gnmap_hosts(gnmapfile, port, proto):
+    """
+    Greps gnmap (grepable) output from Nmap or Masscan for hosts with the specified port and writes hosts to a file.
+    Accepts three arguments: "/path/to/gnmapfile", "port", proto (tcp | udp)
+    """
+    lines = [line.rstrip('\n') for line in open(gnmapfile)]
+    hosts = []
+    search = port + "/open/" + proto
+    for line in lines:
+        if search in line:
+            hosts.append(line.split()[1])
+    if hosts:
+        filename = port + "." + proto + ".txt"
+        with open(filename,'w') as f:
+            f.write('\n'.join(hosts))
+            print("{} hosts written to file : {}".format(len(hosts), filename))
+    else:
+        print("No hosts found with port {} open.".format(port))
+
+def smb_signing():
+    """
+    Tests host for SMB signing and writes affected hosts to a file.
+    """
+    hosts = [line.rstrip('\n') for line in open('445.tcp.txt')]
+    nm = nmap.PortScanner()
+    vuln_hosts = []
+    for target in hosts:
+        nm.scan(hosts=target, ports='445', arguments='-sS --script=smb2-security-mode')
+        for host in nm._scan_result['scan'].keys():
+            try:
+                if "Message signing enabled but not required" in str(nm._scan_result['scan'][host]['hostscript']):
+                    print("[+]{} : Message signing not required".format(host))
+                    vuln_hosts.append(host)
+            except:
+                continue
+    if vuln_hosts:
+        filename = "smb-message-signing.txt"
+        print("Writing vulnerable hosts to file: {}".format(filename))
+        with open(filename,'w') as f:
+            for host in vuln_hosts:
+                f.write(host+'\n')
+
+def smb_vulns():
+    """
+    Scans the specified host async for SMB vulns and calls the function callback_result_smb_vulns.
+    Accepts one argument: host
+    """
+    hosts = [line.rstrip('\n') for line in open('445.tcp.txt')]
+    nm = nmap.PortScanner()
+    vuln_hosts = []
+    for target in hosts:
+        nm.scan(hosts=target, ports='445', arguments='-sS --script=smb-vuln-*')
+        for host in nm._scan_result['scan'].keys():
+            try:
+                for x in nm._scan_result['scan'][host]['hostscript']:
+                    if "State: VULNERABLE" in str(x):
+                        print("[+]" + host + " : VULNERABLE! " + x['id'])
+                        vuln_hosts.append("{} : {}".format(host, x['id']))
+            except:
+                continue
+    if vuln_hosts:
+        filename = "SMB-VULNS.txt"
+        print("Writing vulnerable hosts to file: {}".format(filename))
+        with open(filename,'a') as f:
+            for host in vuln_hosts:
+                f.write(host+'\n')
+
 
 def main():
     # Setup arguments:
@@ -96,7 +163,7 @@ def main():
             else:
                 # Host is not already in host_ports dictionary, add the host and port.
                 host_ports[host] = [port]
-    for host,ports in host_ports.iteritems():
+    for host,ports in host_ports.items():
         ports = ",".join(str(x) for x in ports)
         commands.append(['nmap', '-Pn', '-sS', '-sV', '-p', ports, '-oA', args.output_file, '--append-output', host])
 
@@ -104,8 +171,14 @@ def main():
     exec_commands(commands)
     print("\n[+] Finished running nmap.\n")
 
-    end = time.time()
-    print("Run time: " + str(end-start))
+    print("\nStarting SMB tests...")
+    print("\nChecking for hosts with port 445/tcp open...")
+    grep_gnmap_hosts("{}.gnmap".format(args.output_file), '445', 'tcp')
+    print("\nChecking hosts for SMB signing...")
+    smb_signing()
+    print("\nChecking hosts for SMB vulnerbilities...")
+    smb_vulns()
+
 
 if __name__ == "__main__":
     main()
