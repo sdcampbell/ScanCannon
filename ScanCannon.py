@@ -132,6 +132,9 @@ def smb_vulns():
 
 
 def main():
+    if not os.geteuid() == 0:
+        print("ScanCannon must be run as root/sudo!")
+        sys.exit()
     # Setup arguments:
     parser = argparse.ArgumentParser(description='ScanCannon.py - Runs masscan, follows up with Nmap for more detailed service info.')
     parser.add_argument("scope_file", help="Path to the file which contains hosts/networks in scope.")
