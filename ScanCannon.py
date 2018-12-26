@@ -52,7 +52,7 @@ def exec_commands(cmds):
         else:
             time.sleep(0.05)
 
-def do_masscan(scope_file, ports):
+def do_masscan(scope_file, ports, excludefile):
     masscan_path = os.popen("which masscan").read().rstrip()
     if not masscan_path:
         print("\n[!] Masscan was not found! Please install Masscan and rerun.\n")
