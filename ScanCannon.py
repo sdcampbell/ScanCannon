@@ -144,6 +144,8 @@ def main():
     args = parser.parse_args()
 
     # Run Masscan
+    # iptables - Add rule to prevent the kernel from sendint a RST and killing the connection.
+    os.system("iptables -A INPUT -p tcp --dport 61000 -j DROP")
     if args.limited_ports:
         do_masscan(args.scope_file, top_ports)
     else:
@@ -181,6 +183,9 @@ def main():
     smb_signing()
     print("\nChecking hosts for SMB vulnerabilities...")
     smb_vulns()
+
+    # Remove iptables rule
+    os.system("iptables -D INPUT -p tcp --dport 61000 -j DROP")
 
 
 if __name__ == "__main__":
