@@ -57,7 +57,10 @@ def do_masscan(scope_file, ports):
     if not masscan_path:
         print("\n[!] Masscan was not found! Please install Masscan and rerun.\n")
         sys.exit(1)
-    masscan_args = " -p {0} --open -oG masscan.gnmap -iL {1} --rate=10000".format(ports, scope_file)
+    if args.excludefile:
+        masscan_args = " -p {0} --open --excludefile {1} -oG masscan.gnmap -iL {2} --rate=10000".format(ports, excludefile, scope_file)
+    else:
+        masscan_args = " -p {0} --open -oG masscan.gnmap -iL {1} --rate=10000".format(ports, scope_file)
     print("\n[+] Running masscan, please be patient...")
     os.system(masscan_path + masscan_args)
     # Wait for masscan to complete
@@ -141,15 +144,16 @@ def main():
     parser.add_argument("output_file", help="Base name/path to the output file. Leave off the extension, which will be added by nmap.")
     parser.add_argument("--all-ports", dest="all_ports", action="store_true", help="Scan all 65536 TCP ports.")
     parser.add_argument("--limited-ports", dest="limited_ports", action="store_true", help="Scan a limited number of common vulnerable ports.")
+    parser.add_argument("-e", "--excludefile", dest="excludefile", action="store_true", help="Path to a file containing hosts to exclude from the scan.")
     args = parser.parse_args()
 
     # Run Masscan
     # iptables - Add rule to prevent the kernel from sendint a RST and killing the connection.
     os.system("iptables -A INPUT -p tcp --dport 61000 -j DROP")
     if args.limited_ports:
-        do_masscan(args.scope_file, top_ports)
+        do_masscan(args.scope_file, top_ports, args.excludefile)
     else:
-        do_masscan(args.scope_file, all_ports)
+        do_masscan(args.scope_file, all_ports, args.excludefile)
 
     # Define commands, which will be run in parallel.
     commands = []
@@ -186,7 +190,7 @@ def main():
 
     # Remove iptables rule
     os.system("iptables -D INPUT -p tcp --dport 61000 -j DROP")
-
+    print("If the terminal is jacked up, enter the 'reset' command to fix it.")
 
 if __name__ == "__main__":
     main()
