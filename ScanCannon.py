@@ -58,9 +58,9 @@ def do_masscan(scope_file, ports, excludefile):
         print("\n[!] Masscan was not found! Please install Masscan and rerun.\n")
         sys.exit(1)
     if args.excludefile:
-        masscan_args = " -p {0} --open --excludefile {1} -oG masscan.gnmap -iL {2} --rate=10000".format(ports, excludefile, scope_file)
+        masscan_args = " -p {0} --open --excludefile {1} -oG masscan.gnmap -iL {2} --source-port 61000 --rate=10000".format(ports, excludefile, scope_file)
     else:
-        masscan_args = " -p {0} --open -oG masscan.gnmap -iL {1} --rate=10000".format(ports, scope_file)
+        masscan_args = " -p {0} --open -oG masscan.gnmap -iL {1} --source-port 61000 --rate=10000".format(ports, scope_file)
     print("\n[+] Running masscan, please be patient...")
     os.system(masscan_path + masscan_args)
     # Wait for masscan to complete
@@ -155,6 +155,9 @@ def main():
     else:
         do_masscan(args.scope_file, all_ports, args.excludefile)
 
+    # Remove iptables rule
+    os.system("iptables -D INPUT -p tcp --dport 61000 -j DROP")
+
     # Define commands, which will be run in parallel.
     commands = []
 
@@ -188,9 +191,7 @@ def main():
     print("\nChecking hosts for SMB vulnerabilities...")
     smb_vulns()
 
-    # Remove iptables rule
-    os.system("iptables -D INPUT -p tcp --dport 61000 -j DROP")
-    print("If the terminal is jacked up, enter the 'reset' command to fix it.")
+    print("If the terminal is jacked up, enter the 'reset' command to fix it.\nSorry, but I don't know why this sometimes happens.")
 
 if __name__ == "__main__":
     main()
