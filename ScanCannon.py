@@ -141,7 +141,7 @@ def main():
     # Setup arguments:
     parser = argparse.ArgumentParser(description='ScanCannon.py - Runs masscan, follows up with Nmap for more detailed service info.')
     parser.add_argument("scope_file", help="Path to the file which contains hosts/networks in scope.")
-    parser.add_argument("output_file", help="Base name/path to the output file. Leave off the extension, which will be added by nmap.")
+    parser.add_argument("output_file", help="Base name/path to the output file. Output will be in gnmap format.")
     parser.add_argument("--all-ports", dest="all_ports", action="store_true", help="Scan all 65536 TCP ports.")
     parser.add_argument("--limited-ports", dest="limited_ports", action="store_true", help="Scan a limited number of common vulnerable ports.")
     parser.add_argument("-e", "--excludefile", dest="excludefile", action="store_true", help="Path to a file containing hosts to exclude from the scan.")
@@ -177,7 +177,7 @@ def main():
                 host_ports[host] = [port]
     for host,ports in host_ports.items():
         ports = ",".join(str(x) for x in ports)
-        commands.append(['nmap', '-Pn', '-sS', '-sV', '-p', ports, '-oA', args.output_file, '--append-output', host])
+        commands.append(['nmap', '-Pn', '-sS', '-sV', '-p', ports, '-oG', args.output_file, '--append-output', host])
 
     print("\n[+] Starting nmap, please be patient...\n")
     exec_commands(commands)
