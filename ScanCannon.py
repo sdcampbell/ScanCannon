@@ -57,7 +57,7 @@ def do_masscan(scope_file, ports, excludefile):
     if not masscan_path:
         print("\n[!] Masscan was not found! Please install Masscan and rerun.\n")
         sys.exit(1)
-    if args.excludefile:
+    if excludefile:
         masscan_args = " -p {0} --open --excludefile {1} -oG masscan.gnmap -iL {2} --source-port 61000 --rate=10000".format(ports, excludefile, scope_file)
     else:
         masscan_args = " -p {0} --open -oG masscan.gnmap -iL {1} --source-port 61000 --rate=10000".format(ports, scope_file)
