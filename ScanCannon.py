@@ -148,15 +148,11 @@ def main():
     args = parser.parse_args()
 
     # Run Masscan
-    # iptables - Add rule to prevent the kernel from sendint a RST and killing the connection.
-    os.system("iptables -A INPUT -p tcp --dport 61000 -j DROP")
+
     if args.limited_ports:
         do_masscan(args.scope_file, top_ports, args.excludefile)
     else:
         do_masscan(args.scope_file, all_ports, args.excludefile)
-
-    # Remove iptables rule
-    os.system("iptables -D INPUT -p tcp --dport 61000 -j DROP")
 
     # Define commands, which will be run in parallel.
     commands = []
