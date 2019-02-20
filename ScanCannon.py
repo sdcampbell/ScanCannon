@@ -58,9 +58,9 @@ def do_masscan(scope_file, ports, excludefile):
         print("\n[!] Masscan was not found! Please install Masscan and rerun.\n")
         sys.exit(1)
     if excludefile:
-        masscan_args = " -p {0} --open --excludefile {1} -oG masscan.gnmap -iL {2} --source-port 61000 --rate=10000".format(ports, excludefile, scope_file)
+        masscan_args = " -p {0} --open --excludefile {1} -oG masscan.gnmap -iL {2} --rate=10000".format(ports, excludefile, scope_file)
     else:
-        masscan_args = " -p {0} --open -oG masscan.gnmap -iL {1} --source-port 61000 --rate=10000".format(ports, scope_file)
+        masscan_args = " -p {0} --open -oG masscan.gnmap -iL {1} --rate=10000".format(ports, scope_file)
     print("\n[+] Running masscan, please be patient...")
     os.system(masscan_path + masscan_args)
     # Wait for masscan to complete
